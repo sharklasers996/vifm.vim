@@ -298,6 +298,19 @@ function! s:HandleRunResults(exitcode, listf, typef, editcmd) abort
 		silent! %argdelete
 	endif
 
+	let customcmdfile = $HOME . '/.cache/vifmeditcmd'
+	if file_readable(customcmdfile)
+		let customcmdlist = readfile(customcmdfile)
+		if !empty(customcmdlist)
+			let customcmd = customcmdlist[0]
+			if customcmd != ''
+				let editcmd = customcmd
+			endif
+		endif
+
+		call system('rm ' . $HOME . '/.cache/vifmeditcmd')
+	endif
+
 	for file in flist
 		execute editcmd fnamemodify(file, ':.')
 		if editcmd == 'edit' && len(flist) > 1
